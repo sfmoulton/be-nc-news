@@ -192,6 +192,6 @@ describe.only("formatComments", () => {
     ];
     const refObj = { "They're not exactly dogs, are they?": 1, "Living in the shadow of a great man": 2 };
     expect(formatComments(input, refObj)).to.eql(expected);
+    expect(expected[0]).to.have.all.keys('body', 'article_id', 'author', 'votes', 'created_at');
   });
-  
 });
