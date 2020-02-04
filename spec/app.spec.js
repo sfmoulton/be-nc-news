@@ -139,7 +139,7 @@ describe("/api", () => {
             expect(res.body.article.votes).to.equal(150);
           });
       });
-      describe("/comments", () => {
+      describe.only("/comments", () => {
         it("POST returns status 201, and responds with the newly posted comment", () => {
           return request(app)
             .post("/api/articles/1/comments")
@@ -149,15 +149,50 @@ describe("/api", () => {
             })
             .expect(201)
             .then(res => {
-              expect(res.body.comment).to.have.all.keys('comment_id', 'author', 'article_id', 'votes', 'created_at', 'body');
+              expect(res.body.comment).to.have.all.keys(
+                "comment_id",
+                "author",
+                "article_id",
+                "votes",
+                "created_at",
+                "body"
+              );
             });
         });
-        it('POST ', () => {
-          //if incorrect comment format - 406
-          //
-
-
-
+        it("POST returns status 400 and an error message if a comment object is not included on the request body", () => {
+          return request(app)
+            .post("/api/articles/1/comments")
+            .send({})
+            .expect(406)
+            .then(res => {
+              expect(res.body).to.eql({ msg: "Request Format Not Acceptable" });
+            });
+        });
+        it("POST returns status 400 and an error message if the passed comment object is in an invalid format", () => {
+          return request(app)
+            .post("/api/articles/1/comments")
+            .send({
+              text: "Is this the wrong format?",
+              who_wrote_it: "oh_no"
+            })
+            .expect(400)
+            .then(res => {
+              expect(res.body).to.eql({
+                msg: "Bad Request - Undefined Column Key"
+              });
+            });
+        });
+        it("POST returns status 404 and an error message if the requested article does not exist", () => {
+          return request(app)
+            .post("/api/articles/999999999/comments")
+            .send({
+              body: "Just testing that we can add comments to the articles!",
+              author: "butter_bridge"
+            })
+            .expect(404)
+            .then(res => {
+              expect(res.body).to.eql({ msg: "Not Found" });
+            });
         });
       });
     });
@@ -165,3 +200,7 @@ describe("/api", () => {
 });
 
 //PATCH ARTICLE ID - do we need to account for the comment count key?
+//if incorrect comment format - 406 DONE
+//if incorrect article id format
+//if article id not found
+//if req.body is empty DONE

@@ -36,10 +36,12 @@ exports.updateArticleVotes = (req, res, next) => {
 
 exports.postArticleComment = (req, res, next) => {
   const newComment = req.body;
-  const {article_id} = req.params;
+  const { article_id } = req.params;
 
-  addArticleComment(newComment, article_id).then(comment => {
-    res.status(201).send({ comment });
-  });
+ 
+  addArticleComment(newComment, article_id)
+    .then(comment => {
+      res.status(201).send({ comment });
+    })
+    .catch(next);
 };
-

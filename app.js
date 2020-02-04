@@ -4,6 +4,7 @@ const apiRouter = require("./routers/api");
 const {
   handle22P02,
   handle23502,
+  handle42703,
   handleCustomError,
   handleServerError
 } = require("./errors/index");
@@ -17,6 +18,8 @@ app.use("/api", apiRouter);
 app.use(handle22P02);
 
 app.use(handle23502);
+
+app.use(handle42703);
 
 app.use(handleCustomError);
 
