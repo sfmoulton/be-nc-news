@@ -22,7 +22,7 @@ exports.seed = function(knex) {
       return Promise.all([topicsInsertions, usersInsertions]).then(
         (insertedTopics, insertedUsers) => {
           const formattedArticles = formatDates(articleData);
-
+          // TODO: nesting promises
           return knex("articles")
             .insert(formattedArticles)
             .returning("*");

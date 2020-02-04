@@ -1,6 +1,12 @@
 const express = require("express");
 const app = express();
 const apiRouter = require("./routers/api");
+const {
+  handle22P02,
+  handle23502,
+  handleCustomError,
+  handleServerError
+} = require("./errors/index");
 //error handlers required in
 
 app.use(express.json()); //application-level middleware that will parse incoming request JSON bodies - making them available under the req.body property
@@ -8,11 +14,13 @@ app.use(express.json()); //application-level middleware that will parse incoming
 
 app.use("/api", apiRouter);
 
-app.use((err, req, res, next) => {
-  console.log(err);
-  const { status, msg } = err;
-  res.status(status).send({ msg });
-});
+app.use(handle22P02);
+
+app.use(handle23502);
+
+app.use(handleCustomError);
+
+app.use(handleServerError);
 
 module.exports = app;
 
