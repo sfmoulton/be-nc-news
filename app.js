@@ -5,6 +5,7 @@ const {
   handle22P02,
   handle23502,
   handle42703,
+  // handlePSQLErrors,
   handleCustomError,
   handleServerError
 } = require("./errors/index");
@@ -20,6 +21,8 @@ app.use(handle22P02);
 app.use(handle23502);
 
 app.use(handle42703);
+
+//app.use(handlePSQLErrors);
 
 app.use(handleCustomError);
 

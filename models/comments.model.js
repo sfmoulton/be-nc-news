@@ -9,8 +9,31 @@ exports.addArticleComment = (newComment, article_id) => {
     });
 };
 
-exports.fetchArticleCommentsById = (article_id) => {
-  return connection.select("*").from("comments").where({article_id}).then(comments => {
-    return comments;
-  })
+exports.fetchArticleCommentsById = (
+  article_id,
+  sort_by = "created_at",
+  order = "desc"
+) => {
+  if (order === "asc" || order === "desc") {
+    return connection
+      .select("*")
+      .from("comments")
+      .where({ article_id })
+      .orderBy(sort_by, order)
+      .then(comments => {
+        if (comments.length === 0) {
+          return Promise.reject({
+            status: 404,
+            msg: "Not Found"
+          });
+        }
+        return comments;
+      });
+  } else {
+    return Promise.reject({
+      status: 400,
+      msg: "Invalid Order Query"
+    });
+  }
 };
+

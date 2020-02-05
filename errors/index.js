@@ -1,13 +1,17 @@
 // exports.handlePSQLErrors = (err, req, res, next) => {
+//   console.log("handlePSQLErrors");
 //   if (err.code !== undefined) {
 //     const pSQLErrors = {
 //       "22P02": { status: 400, msg: "Invalid Test Representation" },
-//       23502: { status: 406, msg: "Request Format Not Acceptable" },
-//       42703: { status: 400, msg: "Bad Request - Undefined Column Key" }
+//       "23502": { status: 406, msg: "Request Format Not Acceptable" },
+//       "42703": { status: 400, msg: "Bad Request - Undefined Column Key" }
 //     };
-//     res.status(pSQLErrors[err.code].status).send({msg});
+//     res
+//       .status(pSQLErrors[err.code].status)
+//       .send({ msg: pSQLErrors[err.code].msg });
 //   } else {
-//     next (err)}
+//     next(err);
+//   }
 // };
 
 exports.handle22P02 = (err, req, res, next) => {

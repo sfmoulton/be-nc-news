@@ -1,12 +1,15 @@
 const {
   fetchArticlesById,
   fetchCommentCountbyArticle,
-  amendArticleVotes
+  amendArticleVotes,
+  fetchArticles
 } = require("../models/articles.model");
 const {
   addArticleComment,
   fetchArticleCommentsById
 } = require("../models/comments.model");
+const { checkUserByUsername } = require("../models/users.model");
+const { checkTopic } = require("../models/topics.model");
 
 exports.getArticlesById = (req, res, next) => {
   const { article_id } = req.params;
@@ -56,7 +59,24 @@ exports.postArticleComment = (req, res, next) => {
 
 exports.getArticleCommentsById = (req, res, next) => {
   const { article_id } = req.params;
-  fetchArticleCommentsById(article_id).then(comments => {
-    res.status(200).send({ comments });
-  });
+  const { sort_by, order } = req.query;
+
+  fetchArticleCommentsById(article_id, sort_by, order)
+    .then(comments => {
+      res.status(200).send({ comments });
+    })
+    .catch(next);
+};
+
+exports.getArticles = (req, res, next) => {
+  const { sort_by, order, author, topic } = req.query;
+  
+  return Promise.all([
+    fetchArticles(sort_by, order, author, topic),
+    checkUserByUsername(author), checkTopic(topic)
+  ])
+    .then(([articles, user, topic]) => {
+      res.status(200).send({ articles });
+    })
+    .catch(next);
 };
