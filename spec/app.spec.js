@@ -447,6 +447,14 @@ describe("/api", () => {
             .delete("/api/comments/1")
             .expect(204);
         });
+        it("DELETE returns status 404 when comment requested to be deleted does not exist", () => {
+          return request(app)
+            .delete("/api/comments/9999")
+            .expect(404)
+            .then(({ body }) => {
+              expect(body).to.eql({ msg: "Comment Not Found" });
+            });
+        });
       });
     });
   });

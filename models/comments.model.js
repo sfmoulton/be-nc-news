@@ -58,3 +58,19 @@ exports.removeCommentById = comment_id => {
     .where({ comment_id })
     .del("*");
 };
+
+
+exports.checkComment = comment_id => {
+  if (comment_id === undefined) {
+    return true;
+  }
+  return connection
+    .select("*")
+    .from("comments")
+    .where({comment_id})
+    .then(topic => {
+      if (topic.length === 0) {
+        return Promise.reject({ status: 404, msg: "Comment Not Found" });
+      } else return topic[0];
+    });
+};
