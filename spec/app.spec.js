@@ -201,6 +201,22 @@ describe("/api", () => {
               expect(res.body).to.eql({ msg: "Not Found" });
             });
         });
+        it.only('GET returns status 200 and all comments for the requested article', () => {
+          return request(app)
+            .get("/api/articles/1/comments")
+            .expect(200)
+            .then(res => {
+              expect(res.body.comments[0]).to.have.all.keys(
+                "comment_id",
+                "author",
+                "article_id",
+                "votes",
+                "created_at",
+                "body"
+              );
+              expect(res.body.comments).to.be.an('array');
+            });
+        });
       });
     });
   });

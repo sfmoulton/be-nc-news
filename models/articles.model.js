@@ -34,3 +34,5 @@ exports.amendArticleVotes = (article_id, inc_votes) => {
     return article[0];
   });
 };
+
+

@@ -9,4 +9,8 @@ exports.addArticleComment = (newComment, article_id) => {
     });
 };
 
-//, 
+exports.fetchArticleCommentsById = (article_id) => {
+  return connection.select("*").from("comments").where({article_id}).then(comments => {
+    return comments;
+  })
+};

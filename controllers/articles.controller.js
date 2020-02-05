@@ -3,7 +3,10 @@ const {
   fetchCommentCountbyArticle,
   amendArticleVotes
 } = require("../models/articles.model");
-const { addArticleComment } = require("../models/comments.model");
+const {
+  addArticleComment,
+  fetchArticleCommentsById
+} = require("../models/comments.model");
 
 exports.getArticlesById = (req, res, next) => {
   const { article_id } = req.params;
@@ -49,4 +52,11 @@ exports.postArticleComment = (req, res, next) => {
       res.status(201).send({ comment });
     })
     .catch(next);
+};
+
+exports.getArticleCommentsById = (req, res, next) => {
+  const { article_id } = req.params;
+  fetchArticleCommentsById(article_id).then(comments => {
+    res.status(200).send({ comments });
+  });
 };
