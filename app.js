@@ -8,7 +8,7 @@ const {
   handleCustomError,
   handleServerError
 } = require("./errors/index");
-//error handlers required in
+
 
 app.use(express.json()); //application-level middleware that will parse incoming request JSON bodies - making them available under the req.body property
 //this has to go before our router, to make sure the body is parsed!

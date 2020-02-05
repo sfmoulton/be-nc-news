@@ -7,9 +7,6 @@ const { addArticleComment } = require("../models/comments.model");
 
 exports.getArticlesById = (req, res, next) => {
   const { article_id } = req.params;
-  // const articleIdCheck = /(\d)/g;
-
-  // if (articleIdCheck.test(article_id) === true) {
 
   return Promise.all([
     fetchArticlesById(article_id),
@@ -38,9 +35,17 @@ exports.postArticleComment = (req, res, next) => {
   const newComment = req.body;
   const { article_id } = req.params;
 
- 
-  addArticleComment(newComment, article_id)
-    .then(comment => {
+  return Promise.all([
+    addArticleComment(newComment, article_id),
+    fetchArticlesById(article_id)
+  ])
+    .then(([comment, article]) => {
+      if (article === undefined) {
+        return Promise.reject({
+          status: 404,
+          msg: "Not Found"
+        });
+      }
       res.status(201).send({ comment });
     })
     .catch(next);

@@ -121,6 +121,13 @@ describe("/api", () => {
             expect(res.body).to.eql({ msg: "Invalid Text Representation" });
           });
       });
+      it("PATCH will return status 404 and an error message if the requested article does not exist ", () => {
+        return request(app)
+          .patch("/api/articles/999999")
+          .send({ inc_votes: 100}).expect(404).then(res => {
+            expect(res.body).to.eql({ msg: "Not Found" });
+          })
+      });
       it("PATCH will still return status 200 when the request body contains unwanted information - as this will be ignored", () => {
         return request(app)
           .patch("/api/articles/1")
@@ -139,7 +146,7 @@ describe("/api", () => {
             expect(res.body.article.votes).to.equal(150);
           });
       });
-      describe.only("/comments", () => {
+      describe("/comments", () => {
         it("POST returns status 201, and responds with the newly posted comment", () => {
           return request(app)
             .post("/api/articles/1/comments")
@@ -186,7 +193,7 @@ describe("/api", () => {
           return request(app)
             .post("/api/articles/999999999/comments")
             .send({
-              body: "Just testing that we can add comments to the articles!",
+              body: "This comment should not be added.",
               author: "butter_bridge"
             })
             .expect(404)
@@ -198,9 +205,3 @@ describe("/api", () => {
     });
   });
 });
-
-//PATCH ARTICLE ID - do we need to account for the comment count key?
-//if incorrect comment format - 406 DONE
-//if incorrect article id format
-//if article id not found
-//if req.body is empty DONE

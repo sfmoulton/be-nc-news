@@ -28,6 +28,9 @@ exports.amendArticleVotes = (article_id, inc_votes) => {
      return Promise.reject({ status: 400, msg: "Bad Request - No inc_votes" });
    } 
   return connection("articles").where({ article_id }).increment('votes', inc_votes).returning('*').then(article => {
+    if (article.length === 0) {
+      return Promise.reject({ status: 404, msg: "Not Found" });
+    }
     return article[0];
   });
 };

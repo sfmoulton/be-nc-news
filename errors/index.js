@@ -1,3 +1,15 @@
+// exports.handlePSQLErrors = (err, req, res, next) => {
+//   if (err.code !== undefined) {
+//     const pSQLErrors = {
+//       "22P02": { status: 400, msg: "Invalid Test Representation" },
+//       23502: { status: 406, msg: "Request Format Not Acceptable" },
+//       42703: { status: 400, msg: "Bad Request - Undefined Column Key" }
+//     };
+//     res.status(pSQLErrors[err.code].status).send({msg});
+//   } else {
+//     next (err)}
+// };
+
 exports.handle22P02 = (err, req, res, next) => {
   //console.log("handle22P02");
   if (err.code === "22P02") {
@@ -24,8 +36,6 @@ exports.handle42703 = (err, req, res, next) => {
     next(err);
   }
 };
-
-//when have more than one psql error handler - refer to Handling Errors in postgreSQL lecture - end
 
 exports.handleCustomError = (err, req, res, next) => {
   //console.log("handleCustomError");
