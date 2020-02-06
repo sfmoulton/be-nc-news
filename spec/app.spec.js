@@ -53,6 +53,14 @@ describe("/api", () => {
           expect(res.body).to.eql({ msg: "Not Found" });
         });
     });
+    it("GET returns status 400 and an error message if the requested user is in an invalid format", () => {
+      return request(app)
+        .get("/api/users/banana")
+        .expect(404)
+        .then(res => {
+          expect(res.body).to.eql({ msg: "Not Found" });
+        });
+    });
   });
   describe("/articles", () => {
     it("GET returns status 200 and all articles", () => {
@@ -158,10 +166,6 @@ describe("/api", () => {
         });
     });
   });
-
-  //topic
-  //topic not found - invalid
-  //topic found but no articles
 
   describe("/:article_id", () => {
     it("GET returns status 200 and an article object matching the requested article_id, which includes a comment_count key", () => {
@@ -447,7 +451,7 @@ describe("/api", () => {
             .delete("/api/comments/1")
             .expect(204);
         });
-        it("DELETE returns status 404 when comment requested to be deleted does not exist", () => {
+        it("DELETE returns status 404 and an error message when comment requested to be deleted does not exist", () => {
           return request(app)
             .delete("/api/comments/9999")
             .expect(404)
@@ -455,10 +459,15 @@ describe("/api", () => {
               expect(body).to.eql({ msg: "Comment Not Found" });
             });
         });
+        it("DELETE returns status 400 and an error message when comment query is in an invalid format", () => {
+          return request(app)
+            .delete("/api/comments/banana")
+            .expect(400)
+            .then(({ body }) => {
+              expect(body).to.eql({ msg: "Invalid Text Representation" });
+            });
+        });
       });
     });
   });
 });
-
-//need to add more errors!
-//finish off delete...
