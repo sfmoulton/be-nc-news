@@ -4,7 +4,7 @@ exports.fetchArticlesById = article_id => {
   return connection
     .select("articles.*")
     .from("articles")
-    .where({ article_id })
+    .where({ "articles.article_id": article_id })
     .count({ comment_count: "comments.article_id" })
     .leftJoin("comments", "articles.article_id", "comments.article_id")
     .groupBy("articles.article_id")
@@ -13,7 +13,8 @@ exports.fetchArticlesById = article_id => {
         return Promise.reject({ status: 404, msg: "Article Not Found" });
       }
       return article[0];
-    });
+    })
+   
 };
 
 exports.fetchCommentCountbyArticle = article_id => {

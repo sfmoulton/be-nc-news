@@ -155,7 +155,7 @@ describe("/api", () => {
   });
 
   describe("/:article_id", () => {
-    it.only("GET returns status 200 and an article object matching the requested article_id, which includes a comment_count key", () => {
+    it("GET returns status 200 and an article object matching the requested article_id, which includes a comment_count key", () => {
       return request(app)
         .get("/api/articles/1")
         .expect(200)
@@ -173,7 +173,7 @@ describe("/api", () => {
           expect(body.article.article_id).to.equal(1);
         });
     });
-    it.only("GET returns status 404 and an error message if the requested article does not exist", () => {
+    it("GET returns status 404 and an error message if the requested article does not exist", () => {
       return request(app)
         .get("/api/articles/99999999")
         .expect(404)
@@ -181,7 +181,7 @@ describe("/api", () => {
           expect(body).to.eql({ msg: "Article Not Found" });
         });
     });
-    it.only("GET returns status 400 and a error message if the requested article is badly formatted", () => {
+    it("GET returns status 400 and a error message if the requested article is badly formatted", () => {
       return request(app)
         .get("/api/articles/hello")
         .expect(400)
@@ -267,7 +267,8 @@ describe("/api", () => {
               "author",
               "article_id",
               "votes",
-              "created_at"
+              "created_at",
+              "body"
             );
             expect(body.comment.article_id).to.equal("1");
             //took out what we expect the body to look like - might not have one on the keys!

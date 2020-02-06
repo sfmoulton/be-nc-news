@@ -18,7 +18,7 @@ exports.fetchArticleCommentsById = (
     return connection
       .select("*")
       .from("comments")
-      .where({ article_id })
+      .where("comments.article_id", article_id)
       .orderBy(sort_by, order)
       .then(comments => {
         return comments;

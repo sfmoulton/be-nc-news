@@ -4,7 +4,8 @@ exports.handlePSQLErrors = (err, req, res, next) => {
     const pSQLErrors = {
       "22P02": { status: 400, msg: "Invalid Text Representation" },
       "23502": { status: 406, msg: "Request Format Not Acceptable" },
-      "42703": { status: 400, msg: "Bad Request - Undefined Column Key" }
+      "42703": { status: 400, msg: "Bad Request - Undefined Column Key" },
+      "42702" : {status: 400, msg: "Ambiguous column"}
     };
     res
       .status(pSQLErrors[err.code].status)
