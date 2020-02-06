@@ -1,5 +1,4 @@
-process.env.NODE_ENV = "test"; //ensures the correct config obj will be exported from the knexfile
-//do we need to write the process.env bit?
+process.env.NODE_ENV = "test";
 const chai = require("chai");
 const { expect } = chai;
 const chaiSorted = require("chai-sorted");
@@ -8,10 +7,6 @@ const app = require("../app");
 const connection = require("../db/connection");
 
 chai.use(require("sams-chai-sorted"));
-
-/*seed function in a project can be run using knex CLI
-knex will invoke the seed with a connection object, using the dbConfig
-to query the db directly (e.g. in the model), we have to create this connection object ourselves as here we will also need to query the db in our tests after running our tests, we need to end this database connection*/
 
 describe("/api", () => {
   beforeEach(() => connection.seed.run());
@@ -22,10 +17,10 @@ describe("/api", () => {
       return request(app)
         .get("/api/topics")
         .expect(200)
-        .then(res => {
-          expect(res.body).to.be.an("object");
-          expect(res.body.topics[0]).to.have.all.keys("slug", "description");
-          expect(res.body.topics).to.be.an("array");
+        .then(({ body }) => {
+          expect(body).to.be.an("object");
+          expect(body.topics[0]).to.have.all.keys("slug", "description");
+          expect(body.topics).to.be.an("array");
         });
     });
   });
@@ -34,8 +29,8 @@ describe("/api", () => {
       return request(app)
         .get("/api/users/icellusedkars")
         .expect(200)
-        .then(res => {
-          expect(res.body).to.eql({
+        .then(({ body }) => {
+          expect(body).to.eql({
             user: {
               username: "icellusedkars",
               name: "sam",
@@ -49,16 +44,8 @@ describe("/api", () => {
       return request(app)
         .get("/api/users/9999")
         .expect(404)
-        .then(res => {
-          expect(res.body).to.eql({ msg: "Not Found" });
-        });
-    });
-    it("GET returns status 400 and an error message if the requested user is in an invalid format", () => {
-      return request(app)
-        .get("/api/users/banana")
-        .expect(404)
-        .then(res => {
-          expect(res.body).to.eql({ msg: "Not Found" });
+        .then(({ body }) => {
+          expect(body).to.eql({ msg: "Not Found" });
         });
     });
   });
@@ -119,7 +106,7 @@ describe("/api", () => {
           expect(body).to.eql({ msg: "Invalid Order Query" });
         });
     });
-    it("GET will sort by created_at property and in descending order, by default if neither query is passed ", () => {
+    it("GET will sort by created_at property and in descending order by default (if neither query is passed) ", () => {
       return request(app)
         .get("/api/articles")
         .expect(200)
@@ -168,7 +155,7 @@ describe("/api", () => {
   });
 
   describe("/:article_id", () => {
-    it("GET returns status 200 and an article object matching the requested article_id, which includes a comment_count key", () => {
+    it.only("GET returns status 200 and an article object matching the requested article_id, which includes a comment_count key", () => {
       return request(app)
         .get("/api/articles/1")
         .expect(200)
@@ -186,20 +173,20 @@ describe("/api", () => {
           expect(body.article.article_id).to.equal(1);
         });
     });
-    it("GET returns status 404 and an error message if the requested article does not exist", () => {
+    it.only("GET returns status 404 and an error message if the requested article does not exist", () => {
       return request(app)
         .get("/api/articles/99999999")
         .expect(404)
-        .then(res => {
-          expect(res.body).to.eql({ msg: "Not Found" });
+        .then(({ body }) => {
+          expect(body).to.eql({ msg: "Article Not Found" });
         });
     });
-    it("GET returns status 400 and a error message if the requested article is badly formatted", () => {
+    it.only("GET returns status 400 and a error message if the requested article is badly formatted", () => {
       return request(app)
         .get("/api/articles/hello")
         .expect(400)
-        .then(res => {
-          expect(res.body).to.eql({ msg: "Invalid Text Representation" });
+        .then(({ body }) => {
+          expect(body).to.eql({ msg: "Invalid Text Representation" });
         });
     });
     it("PATCH returns status 200 and will update the votes property on the requested article by the passed amount", () => {
@@ -207,8 +194,8 @@ describe("/api", () => {
         .patch("/api/articles/1")
         .send({ inc_votes: 100 })
         .expect(200)
-        .then(res => {
-          expect(res.body.article).to.have.all.keys(
+        .then(({ body }) => {
+          expect(body.article).to.have.all.keys(
             "article_id",
             "title",
             "topic",
@@ -217,7 +204,7 @@ describe("/api", () => {
             "created_at",
             "votes"
           );
-          expect(res.body.article.votes).to.equal(200);
+          expect(body.article.votes).to.equal(200);
         });
     });
     it("PATCH returns status 400 and an error message if inc_votes is not included on the request body", () => {
@@ -225,8 +212,8 @@ describe("/api", () => {
         .patch("/api/articles/1")
         .send({})
         .expect(400)
-        .then(res => {
-          expect(res.body).to.eql({ msg: "Bad Request - No inc_votes" });
+        .then(({ body }) => {
+          expect(body).to.eql({ msg: "Bad Request - No inc_votes" });
         });
     });
     it("PATCH returns status 400 and an error message if inc_votes is in an invalid format", () => {
@@ -234,8 +221,8 @@ describe("/api", () => {
         .patch("/api/articles/1")
         .send({ inc_votes: "banana" })
         .expect(400)
-        .then(res => {
-          expect(res.body).to.eql({ msg: "Invalid Text Representation" });
+        .then(({ body }) => {
+          expect(body).to.eql({ msg: "Invalid Text Representation" });
         });
     });
     it("PATCH will return status 404 and an error message if the requested article does not exist ", () => {
@@ -243,8 +230,8 @@ describe("/api", () => {
         .patch("/api/articles/999999")
         .send({ inc_votes: 100 })
         .expect(404)
-        .then(res => {
-          expect(res.body).to.eql({ msg: "Not Found" });
+        .then(({ body }) => {
+          expect(body).to.eql({ msg: "Article Not Found" });
         });
     });
     it("PATCH will still return status 200 when the request body contains unwanted information - as this will be ignored", () => {
@@ -252,8 +239,8 @@ describe("/api", () => {
         .patch("/api/articles/1")
         .send({ name: "Mitch", inc_votes: 50 })
         .expect(200)
-        .then(res => {
-          expect(res.body.article).to.have.all.keys(
+        .then(({ body }) => {
+          expect(body.article).to.have.all.keys(
             "article_id",
             "title",
             "topic",
@@ -262,7 +249,7 @@ describe("/api", () => {
             "created_at",
             "votes"
           );
-          expect(res.body.article.votes).to.equal(150);
+          expect(body.article.votes).to.equal(150);
         });
     });
     describe("/comments", () => {
@@ -274,15 +261,16 @@ describe("/api", () => {
             author: "butter_bridge"
           })
           .expect(201)
-          .then(res => {
-            expect(res.body.comment).to.have.all.keys(
+          .then(({ body }) => {
+            expect(body.comment).to.have.all.keys(
               "comment_id",
               "author",
               "article_id",
               "votes",
-              "created_at",
-              "body"
+              "created_at"
             );
+            expect(body.comment.article_id).to.equal("1");
+            //took out what we expect the body to look like - might not have one on the keys!
           });
       });
       it("POST returns status 400 and an error message if a comment object is not included on the request body", () => {
@@ -290,8 +278,8 @@ describe("/api", () => {
           .post("/api/articles/1/comments")
           .send({})
           .expect(406)
-          .then(res => {
-            expect(res.body).to.eql({ msg: "Request Format Not Acceptable" });
+          .then(({ body }) => {
+            expect(body).to.eql({ msg: "Request Format Not Acceptable" });
           });
       });
       it("POST returns status 400 and an error message if the passed comment object is in an invalid format", () => {
@@ -302,8 +290,8 @@ describe("/api", () => {
             who_wrote_it: "oh_no"
           })
           .expect(400)
-          .then(res => {
-            expect(res.body).to.eql({
+          .then(({ body }) => {
+            expect(body).to.eql({
               msg: "Bad Request - Undefined Column Key"
             });
           });
@@ -316,8 +304,8 @@ describe("/api", () => {
             author: "butter_bridge"
           })
           .expect(404)
-          .then(res => {
-            expect(res.body).to.eql({ msg: "Not Found" });
+          .then(({ body }) => {
+            expect(body).to.eql({ msg: "Article Not Found" });
           });
       });
       describe("GET (including queries)", () => {
@@ -325,8 +313,8 @@ describe("/api", () => {
           return request(app)
             .get("/api/articles/1/comments")
             .expect(200)
-            .then(res => {
-              expect(res.body.comments[0]).to.have.all.keys(
+            .then(({ body }) => {
+              expect(body.comments[0]).to.have.all.keys(
                 "comment_id",
                 "author",
                 "article_id",
@@ -334,15 +322,15 @@ describe("/api", () => {
                 "created_at",
                 "body"
               );
-              expect(res.body.comments).to.be.an("array");
+              expect(body.comments).to.be.an("array");
             });
         });
         it("GET returns status 404 and an error message if the requested article does not exist", () => {
           return request(app)
             .get("/api/articles/99999/comments")
             .expect(404)
-            .then(res => {
-              expect(res.body).to.eql({ msg: "Not Found" });
+            .then(({ body }) => {
+              expect(body).to.eql({ msg: "Article Not Found" });
             });
         });
         it("GET returns status 400 and a error message if the requested article is badly formatted", () => {
@@ -424,8 +412,8 @@ describe("/api", () => {
             .patch("/api/comments/1")
             .send({})
             .expect(400)
-            .then(res => {
-              expect(res.body).to.eql({ msg: "Bad Request - No inc_votes" });
+            .then(({ body }) => {
+              expect(body).to.eql({ msg: "Bad Request - No inc_votes" });
             });
         });
         it("PATCH returns status 400 and an error message if inc_votes is in an invalid format", () => {
@@ -433,8 +421,8 @@ describe("/api", () => {
             .patch("/api/comments/1")
             .send({ inc_votes: "banana" })
             .expect(400)
-            .then(res => {
-              expect(res.body).to.eql({ msg: "Invalid Text Representation" });
+            .then(({ body }) => {
+              expect(body).to.eql({ msg: "Invalid Text Representation" });
             });
         });
         it("PATCH will return status 404 and an error message if the requested article does not exist ", () => {
@@ -442,8 +430,8 @@ describe("/api", () => {
             .patch("/api/comments/999999")
             .send({ inc_votes: 100 })
             .expect(404)
-            .then(res => {
-              expect(res.body).to.eql({ msg: "Not Found" });
+            .then(({ body }) => {
+              expect(body).to.eql({ msg: "Not Found" });
             });
         });
         it("DELETE returns status 204 when requested comment has been deleted", () => {
@@ -468,6 +456,59 @@ describe("/api", () => {
             });
         });
       });
+    });
+  });
+  describe("INVALID METHODS", () => {
+    it("PATCH returns status 405 and an error message when used on the /api/topics route", () => {
+      return request(app)
+        .patch("/api/topics")
+        .expect(405)
+        .then(({ body: { msg } }) => {
+          expect(msg).to.equal("Method Not Allowed");
+        });
+    });
+    it("PATCH returns status 405 and an error message when used on the /api/articles route", () => {
+      return request(app)
+        .patch("/api/articles")
+        .expect(405)
+        .then(({ body: { msg } }) => {
+          expect(msg).to.equal("Method Not Allowed");
+        });
+    });
+    it("PUT returns status 405 and an error message when used on the /api/articles/:articles_id route", () => {
+      return request(app)
+        .put("/api/articles/1")
+        .expect(405)
+        .then(({ body: { msg } }) => {
+          expect(msg).to.equal("Method Not Allowed");
+        });
+    });
+    it("PUT returns status 405 and an error message when used on the /api/articles/:articles_id/comments route", () => {
+      return request(app)
+        .put("/api/articles/1/comments")
+        .expect(405)
+        .then(({ body }) => {
+          expect(body.msg).to.equal("Method Not Allowed");
+        });
+    });
+    it("PUT returns status 405 and an error message when used on the /api/comments/:comment_id route", () => {
+      return request(app)
+        .put("/api/comments/1")
+        .expect(405)
+        .then(({ body }) => {
+          expect(body.msg).to.equal("Method Not Allowed");
+        });
+    });
+    it("PUT returns status 405 and an error message when used on the /users/:username route", () => {
+      return request(app)
+        .put("/api/users/butter_bridge")
+        .expect(405)
+        .then(({ body }) => {
+          expect(body.msg).to.equal("Method Not Allowed");
+        });
+    });
+    xit("DELETE returns status 405 and an error message when used on the /api route", () => {
+      //need to come back to when I've written the api endpoint
     });
   });
 });

@@ -2,12 +2,15 @@ const connection = require("../db/connection");
 
 exports.fetchArticlesById = article_id => {
   return connection
-    .select("*")
+    .select("articles.*")
     .from("articles")
     .where({ article_id })
+    .count({ comment_count: "comments.article_id" })
+    .leftJoin("comments", "articles.article_id", "comments.article_id")
+    .groupBy("articles.article_id")
     .then(article => {
       if (article.length === 0) {
-        return Promise.reject({ status: 404, msg: "Not Found" });
+        return Promise.reject({ status: 404, msg: "Article Not Found" });
       }
       return article[0];
     });
@@ -33,26 +36,29 @@ exports.amendArticleVotes = (article_id, inc_votes) => {
     .returning("*")
     .then(article => {
       if (article.length === 0) {
-        return Promise.reject({ status: 404, msg: "Not Found" });
+        return Promise.reject({ status: 404, msg: "Article Not Found" });
       }
       return article[0];
     });
 };
 
-exports.fetchArticles = (sort_by = "created_at", order = "desc", author, topic) => {
+exports.fetchArticles = (
+  sort_by = "created_at",
+  order = "desc",
+  author,
+  topic
+) => {
+  let withAuthorQuery = queryBuilder => {
+    if (author !== undefined) {
+      queryBuilder.where("articles.author", author);
+    }
+  };
 
-let withAuthorQuery = (queryBuilder) => {
-  if (author !== undefined) {
-    queryBuilder.where("articles.author", author);
-  }
-}
-
-let withTopicQuery = (queryBuilder) => {
-  if (topic !== undefined) {
-    queryBuilder.where("articles.topic", topic);
-  }
-}
-
+  let withTopicQuery = queryBuilder => {
+    if (topic !== undefined) {
+      queryBuilder.where("articles.topic", topic);
+    }
+  };
 
   if (order === "asc" || order === "desc") {
     return connection

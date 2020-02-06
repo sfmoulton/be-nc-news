@@ -14,13 +14,10 @@ const { checkTopic } = require("../models/topics.model");
 exports.getArticlesById = (req, res, next) => {
   const { article_id } = req.params;
 
-  return Promise.all([
-    fetchArticlesById(article_id),
-    fetchCommentCountbyArticle(article_id)
-  ])
-    .then(([article, commentCount]) => {
-      //need to remember to destructure the Promise.all result here!
-      article.comment_count = commentCount;
+  fetchArticlesById(article_id)
+    .then(article => {
+      console.log(article);
+      
       res.status(200).send({ article });
     })
     .catch(next);
@@ -61,8 +58,17 @@ exports.getArticleCommentsById = (req, res, next) => {
   const { article_id } = req.params;
   const { sort_by, order } = req.query;
 
-  fetchArticleCommentsById(article_id, sort_by, order)
-    .then(comments => {
+  return Promise.all([
+    fetchArticleCommentsById(article_id, sort_by, order),
+    fetchArticlesById(article_id)
+  ])
+    .then(([comments, article]) => {
+      if (article === undefined) {
+        return Promise.reject({
+          status: 404,
+          msg: "Article Not Found"
+        });
+      }
       res.status(200).send({ comments });
     })
     .catch(next);
@@ -70,10 +76,11 @@ exports.getArticleCommentsById = (req, res, next) => {
 
 exports.getArticles = (req, res, next) => {
   const { sort_by, order, author, topic } = req.query;
-  
+
   return Promise.all([
     fetchArticles(sort_by, order, author, topic),
-    checkUserByUsername(author), checkTopic(topic)
+    checkUserByUsername(author),
+    checkTopic(topic)
   ])
     .then(([articles, user, topic]) => {
       res.status(200).send({ articles });

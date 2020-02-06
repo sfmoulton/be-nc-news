@@ -126,18 +126,20 @@ describe.only("formatComments", () => {
         created_at: 1511354163389
       }
     ];
-    const expected = [{
+    const expected = [
+      {
         body:
           "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!",
         article_id: 1,
         author: "butter_bridge",
         votes: 16,
         created_at: new Date(1511354163389)
-      }];
-    const refObj = {"They're not exactly dogs, are they?": 1};
+      }
+    ];
+    const refObj = { "They're not exactly dogs, are they?": 1 };
     expect(formatComments(input, refObj)).to.eql(expected);
   });
-  it('when passed an array with multiple comments objects, returns a formatted comments array', () => {
+  it("when passed an array with multiple comments objects, returns a formatted comments array", () => {
     const input = [
       {
         body:
@@ -190,8 +192,17 @@ describe.only("formatComments", () => {
         created_at: new Date(1448282163389)
       }
     ];
-    const refObj = { "They're not exactly dogs, are they?": 1, "Living in the shadow of a great man": 2 };
+    const refObj = {
+      "They're not exactly dogs, are they?": 1,
+      "Living in the shadow of a great man": 2
+    };
     expect(formatComments(input, refObj)).to.eql(expected);
-    expect(expected[0]).to.have.all.keys('body', 'article_id', 'author', 'votes', 'created_at');
+    expect(expected[0]).to.have.all.keys(
+      "body",
+      "article_id",
+      "author",
+      "votes",
+      "created_at"
+    );
   });
 });

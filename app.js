@@ -2,29 +2,21 @@ const express = require("express");
 const app = express();
 const apiRouter = require("./routers/api");
 const {
-  handle22P02,
-  handle23502,
-  handle42703,
-  // handlePSQLErrors,
+  handlePSQLErrors,
   handleCustomError,
+  send405Error,
   handleServerError
 } = require("./errors/index");
 
-
-app.use(express.json()); //application-level middleware that will parse incoming request JSON bodies - making them available under the req.body property
-//this has to go before our router, to make sure the body is parsed!
+app.use(express.json()); 
 
 app.use("/api", apiRouter);
 
-app.use(handle22P02);
-
-app.use(handle23502);
-
-app.use(handle42703);
-
-//app.use(handlePSQLErrors);
+app.use(handlePSQLErrors);
 
 app.use(handleCustomError);
+
+//app.use(send405Error);
 
 app.use(handleServerError);
 

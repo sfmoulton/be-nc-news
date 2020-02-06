@@ -21,12 +21,6 @@ exports.fetchArticleCommentsById = (
       .where({ article_id })
       .orderBy(sort_by, order)
       .then(comments => {
-        if (comments.length === 0) {
-          return Promise.reject({
-            status: 404,
-            msg: "Not Found"
-          });
-        }
         return comments;
       });
   } else {
@@ -59,7 +53,6 @@ exports.removeCommentById = comment_id => {
     .del("*");
 };
 
-
 exports.checkComment = comment_id => {
   if (comment_id === undefined) {
     return true;
@@ -67,7 +60,7 @@ exports.checkComment = comment_id => {
   return connection
     .select("*")
     .from("comments")
-    .where({comment_id})
+    .where({ comment_id })
     .then(topic => {
       if (topic.length === 0) {
         return Promise.reject({ status: 404, msg: "Comment Not Found" });
