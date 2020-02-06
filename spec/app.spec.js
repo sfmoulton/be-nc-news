@@ -258,7 +258,7 @@ describe("/api", () => {
           .post("/api/articles/1/comments")
           .send({
             body: "Just testing that we can add comments to the articles!",
-            author: "butter_bridge"
+            author: "butter_bridge" //tried changing to username and doesn't work! do I need to amend my utils? I've tried but doesn't work...
           })
           .expect(201)
           .then(({ body }) => {
@@ -297,7 +297,7 @@ describe("/api", () => {
             });
           });
       });
-      it.only("POST returns status 404 and an error message if the requested article does not exist", () => {
+      it("POST returns status 404 and an error message if the requested article does not exist", () => {
         return request(app)
           .post("/api/articles/999999999/comments")
           .send({

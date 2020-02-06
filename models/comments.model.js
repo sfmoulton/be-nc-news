@@ -3,6 +3,8 @@ const connection = require("../db/connection");
 exports.addArticleComment = (newComment, article_id) => {
   
   newComment.article_id = article_id;
+  console.log(newComment);
+  
   
   return connection("comments")
     .insert(newComment, "*")
