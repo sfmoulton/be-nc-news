@@ -36,19 +36,11 @@ exports.postArticleComment = (req, res, next) => {
   const newComment = req.body;
   const { article_id } = req.params;
 
-  return Promise.all([
-    addArticleComment(newComment, article_id),
-    fetchArticlesById(article_id)
-  ])
-    .then(([comment, article]) => {
-      if (article === undefined) {
-        return Promise.reject({
-          status: 404,
-          msg: "Not Found"
-        });
-      }
+  addArticleComment(newComment, article_id)
+    .then(comment => {
       res.status(201).send({ comment });
     })
+
     .catch(next);
 };
 

@@ -270,11 +270,11 @@ describe("/api", () => {
               "created_at",
               "body"
             );
-            expect(body.comment.article_id).to.equal("1");
+            expect(body.comment.article_id).to.equal(1);
             //took out what we expect the body to look like - might not have one on the keys!
           });
       });
-      it("POST returns status 400 and an error message if a comment object is not included on the request body", () => {
+      it("POST returns status 406 and an error message if a comment object is not included on the request body", () => {
         return request(app)
           .post("/api/articles/1/comments")
           .send({})
@@ -297,7 +297,7 @@ describe("/api", () => {
             });
           });
       });
-      it("POST returns status 404 and an error message if the requested article does not exist", () => {
+      it.only("POST returns status 404 and an error message if the requested article does not exist", () => {
         return request(app)
           .post("/api/articles/999999999/comments")
           .send({
@@ -306,7 +306,9 @@ describe("/api", () => {
           })
           .expect(404)
           .then(({ body }) => {
-            expect(body).to.eql({ msg: "Article Not Found" });
+            expect(body).to.eql({
+              msg: "Foreign Key Violation - Column Not Found"
+            });
           });
       });
       describe("GET (including queries)", () => {

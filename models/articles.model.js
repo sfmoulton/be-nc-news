@@ -13,8 +13,7 @@ exports.fetchArticlesById = article_id => {
         return Promise.reject({ status: 404, msg: "Article Not Found" });
       }
       return article[0];
-    })
-   
+    });
 };
 
 exports.fetchCommentCountbyArticle = article_id => {
