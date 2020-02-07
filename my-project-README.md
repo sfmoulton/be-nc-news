@@ -1,0 +1,133 @@
+# NC-News Project - Back-End
+
+NC-News has been created to allow users to post articles they have written, as well as allowing them to read or comment on other users articles.
+
+NC-News has created a space for users to share their thoughts and opinions, and show off their creative writing!
+
+## Getting Started
+
+The following instructions will allow you to set up your own version of NC-News!
+
+### Cloning the project
+
+Clone this repo:
+```
+git clone https://github.com/sfmoulton/be-nc-news
+```
+Then don't forget to hook your local version up to a new GitHub repo, using the below terminal commands (checking the git remotes with each step: git remote -v):
+
+```
+git remote remove origin
+
+git remote add origin <YOUR-GITHUB-URL>
+```
+Or if you would like to suggest any project changes, please feel free to collaborate and your own push requests to my repo.
+
+## Available Endpoints!
+
+I have created a number of endpoints, which I have outlined for you below.
+
+Each route has been constructed with the aim to make NC-News a user-friendly app, which can be easily navigated. 
+
+There are also options for the user to contribute to the site with their own posts or comments - making it truly a collaborative forum.
+
+```
+GET /api
+```
+- Will return information detailing all of the available endpoints.
+
+```
+GET /api/topics
+```
+- Will return all of the article topics that ahttps://www.npmjs.com/package/sams-chai-sortedre included on the app.
+
+```
+GET /api/users/:username
+```
+- Will return information about the requested user, searched by their username.
+```
+GET /api/articles
+```
+- Will return all of the articles available on the app.
+- Users can also query by their chosen author or topic.
+- It is also possible to chose a property to sort the articles by, and this will default to the article's creation dates. They can also select whether this should be in ascending or descending order (which defaults to descending).
+```
+GET /api/articles/:article_id
+
+PATCH /api/articles/:article_id
+```
+- Using this endpoint, users can choose to return an article by the chosen article ID, or alternatively they can update the number of votes an article has received.
+```
+GET /api/articles/:article_id/comments
+
+POST /api/articles/:article_id/comments
+```
+- Using the above routes, users can return the chosen articles comments, or alternatively they can post a comment on an article of their choosing.
+```
+PATCH /api/comments/:comment_id
+
+DELETE /api/comments/:comment_id
+```
+- With these endpoints, users are able to update the number of votes a comment has received, or they can delete a comment that has been posted.
+
+## Hosted Site
+
+To preview the hosted site, please follow the link below (not forgetting to add your chosen endpoint!):
+
+```
+https://steph-nc-news-app.herokuapp.com/
+```
+## Project Dependencies
+
+The following dependencies were required to build NC-News:
+
+- ##### Express (https://expressjs.com/)
+
+Express is a minimal and flexible Node.js web application framework, that allowed me to build the server.
+
+- ##### Knex (http://knexjs.org/)
+
+Knex is a SQL query builder, which allowed me to make flexible SQL queries to the database.
+
+- ##### PostgreSQL (https://www.postgresql.org/)
+
+Postgres allowed me to use SQL and postgres commands to help to manage and interact with the database.
+
+### Developer Dependencies
+
+- ##### Chai (https://www.chaijs.com/)
+
+Chai is a TDD assertion library, that facilitated our test writing.
+
+- ##### Chai-Sorted (https://www.npmjs.com/package/chai-sorted) & Sams-Chai-Sorted (https://www.npmjs.com/package/sams-chai-sorted)
+    
+The above are both plugins for Chai - which allowed us to write tests that implement Array.prototype.sort(). Sam's plugin allows us to sort by whole numbers, rather than the first digit, which is what Chai-Sorted implements.
+
+- ##### Mocha (https://mochajs.org/)
+
+Mocha was the JS test-runner for the project.
+
+- ##### Supertest (https://www.npmjs.com/package/supertest)
+
+A library that was used to test the server.
+
+## Scripts
+
+Here is an outline of the scripts which are included in the package.json, and how they should be utilised:
+
+
+
+"setup-dbs": "psql -f ./db/setup.sql"
+"seed": "npm run setup-dbs && knex seed:run"
+"seed-test": "npm run setup-dbs && NODE_ENV=test knex seed:run"
+"test-utils": "mocha spec/utils.spec.js"
+"test": "mocha spec/app.spec.js"
+"migrate:make": "knex migrate:make"
+"migrate-latest": "knex migrate:latest"
+"migrate-rollback": "knex migrate:rollback"
+"seed:prod": "NODE_ENV=production DB_URL=$(heroku config:get DATABASE_URL) knex seed:run"
+"migrate-latest:prod": "NODE_ENV=production DB_URL=$(heroku config:get DATABASE_URL) knex migrate:latest"
+"migrate-rollback:prod": "NODE_ENV=production DB_URL=$(heroku config:get DATABASE_URL) knex migrate:rollback"
+"start": "node listen.js"
+
+```
