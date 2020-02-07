@@ -273,7 +273,7 @@ it('GET returns a status 200 and a JSON object containing all of the available e
           .post("/api/articles/1/comments")
           .send({
             body: "Just testing that we can add comments to the articles!",
-            author: "butter_bridge" //tried changing to username and doesn't work! do I need to amend my utils? I've tried but doesn't work...
+           author: "butter_bridge" //tried changing to username and doesn't work! do I need to amend my utils? I've tried but doesn't work...
           })
           .expect(201)
           .then(({ body }) => {

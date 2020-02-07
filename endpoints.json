@@ -10,7 +10,7 @@
     }
   },
   "GET /api/articles": {
-    "description": "serves an array of all topics",
+    "description": "serves an array of all articles",
     "queries": ["author", "topic", "sort_by", "order"],
     "exampleResponse": {
       "articles": [
@@ -23,5 +23,27 @@
         }
       ]
     }
+  },
+  "GET /api/articles/:article_id": {
+    "description" : "serves an object of the requested article"
+  },
+  "PATCH /api/articles/:article_id" : {
+    "description": "updates the votes property on the requested article, and serves the requested updated article object"
+  },
+  "POST /api/articles/:article_id/comments" : {
+    "description": "posts a new comment to the requested article, and serves the posted comment"
+  },
+  "GET /api/articles/:article_id/comments": {
+    "description": "serves an array of the comments for the requested article"
+  },
+  "PATCH /api/comments/:comment_id": {
+    "description": "updates the votes property on the requested comment, and serves the requested updated comment object"
+  },
+  "DELETE /api/comments/:comment_id": {
+    "description": "removes the requested comment"
+  },
+  "GET /api/users/:username": {
+    "description": "serves an object of the requested user"
   }
 }
+
