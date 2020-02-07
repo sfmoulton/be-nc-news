@@ -160,6 +160,6 @@ Here is an outline of the scripts which are included in the package.json, and ho
 - A start script that allows us to host our server using Heroku.
 
 
-## If you have any questions regarding the project, please get in touch!
+### If you have any questions regarding the project, please get in touch!
 
 
