@@ -115,19 +115,51 @@ A library that was used to test the server.
 
 Here is an outline of the scripts which are included in the package.json, and how they should be utilised:
 
-
-
-"setup-dbs": "psql -f ./db/setup.sql"
-"seed": "npm run setup-dbs && knex seed:run"
-"seed-test": "npm run setup-dbs && NODE_ENV=test knex seed:run"
-"test-utils": "mocha spec/utils.spec.js"
-"test": "mocha spec/app.spec.js"
-"migrate:make": "knex migrate:make"
-"migrate-latest": "knex migrate:latest"
-"migrate-rollback": "knex migrate:rollback"
-"seed:prod": "NODE_ENV=production DB_URL=$(heroku config:get DATABASE_URL) knex seed:run"
-"migrate-latest:prod": "NODE_ENV=production DB_URL=$(heroku config:get DATABASE_URL) knex migrate:latest"
-"migrate-rollback:prod": "NODE_ENV=production DB_URL=$(heroku config:get DATABASE_URL) knex migrate:rollback"
-"start": "node listen.js"
+```
+"setup-dbs":```
+```
+- Run to create the database
 
 ```
+"seed":
+```
+- Script that will create the database, and seed the database with our development data.
+
+```
+"seed-test":
+```
+- Script that will create the test database, and seed the database with our test data.
+
+```
+"seed:prod": 
+```
+- Script that will create the production database, and will seed the database with our development data.
+
+```
+"test-utils": 
+```
+- Tests to functions written to format the seed data are running correctly.
+
+```
+"test":
+```
+- Tests to ensure that all of our endpoints and requests are working correctly.
+
+```
+"migrate:make": 
+"migrate-latest": 
+"migrate-rollback": 
+"migrate-latest:prod": 
+"migrate-rollback:prod": 
+```
+- Scripts that facilitate the database migrations, allowing us to manage the database with incremental changes and store these updates/tables in the migration files.
+
+```
+"start": 
+```
+- A start script that allows us to host our server using Heroku.
+
+
+## If you have any questions regarding the project, please get in touch!
+
+
