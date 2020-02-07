@@ -1,14 +1,16 @@
 const connection = require("../db/connection");
 
 exports.addArticleComment = (newComment, article_id) => {
-  
+
   newComment.article_id = article_id;
-  
+  newComment.author = newComment.username;
+  delete newComment.username;
+
   return connection("comments")
     .insert(newComment, "*")
     .then(comment => {
       return comment[0];
-    });
+    })
 };
 
 exports.fetchArticleCommentsById = (

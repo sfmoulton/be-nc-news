@@ -273,7 +273,7 @@ it('GET returns a status 200 and a JSON object containing all of the available e
           .post("/api/articles/1/comments")
           .send({
             body: "Just testing that we can add comments to the articles!",
-           author: "butter_bridge" //tried changing to username and doesn't work! do I need to amend my utils? I've tried but doesn't work...
+           username: "butter_bridge" 
           })
           .expect(201)
           .then(({ body }) => {
@@ -286,7 +286,6 @@ it('GET returns a status 200 and a JSON object containing all of the available e
               "body"
             );
             expect(body.comment.article_id).to.equal(1);
-            //took out what we expect the body to look like - might not have one on the keys!
           });
       });
       it("POST returns status 406 and an error message if a comment object is not included on the request body", () => {
@@ -296,6 +295,17 @@ it('GET returns a status 200 and a JSON object containing all of the available e
           .expect(406)
           .then(({ body }) => {
             expect(body).to.eql({ msg: "Request Format Not Acceptable" });
+          });
+      });
+      it('POST returns status 400 and an error message if a username key is not included on the request comment object', () => {
+        return request(app)
+          .post("/api/articles/1/comments")
+          .send({body: 'Will this body be added?'})
+          .expect(400)
+          .then(({ body }) => {
+            expect(body).to.eql({
+              msg: "Bad Request - Missing Key on Comment"
+            });
           });
       });
       it("POST returns status 400 and an error message if the passed comment object is in an invalid format", () => {
@@ -317,7 +327,7 @@ it('GET returns a status 200 and a JSON object containing all of the available e
           .post("/api/articles/999999999/comments")
           .send({
             body: "This comment should not be added.",
-            author: "butter_bridge"
+            username: "butter_bridge"
           })
           .expect(404)
           .then(({ body }) => {

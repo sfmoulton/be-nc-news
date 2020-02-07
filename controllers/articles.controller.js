@@ -38,6 +38,10 @@ exports.postArticleComment = (req, res, next) => {
 
   addArticleComment(newComment, article_id)
     .then(comment => {
+      if (comment.author === null) {
+        return Promise.reject({ status: 400, msg: "Bad Request - Username Not Assigned to Comment" });
+      }
+
       res.status(201).send({ comment });
     })
 

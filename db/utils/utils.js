@@ -22,6 +22,7 @@ exports.makeRefObj = (list, key, value) => {
 
 exports.formatComments = (comments, articleRef) => {
   const copyComments = comments.map(item => {
+    
     let newItem = { ...item };
     newItem.author = newItem.created_by;
     newItem.article_id = articleRef[item.belongs_to];
@@ -31,5 +32,7 @@ exports.formatComments = (comments, articleRef) => {
 
     return newItem;
   });
+ 
+  
   return copyComments;
 };
