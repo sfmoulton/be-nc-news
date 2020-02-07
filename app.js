@@ -16,8 +16,6 @@ app.use(handlePSQLErrors);
 
 app.use(handleCustomError);
 
-//app.use(send405Error);
-
 app.use(handleServerError);
 
 module.exports = app;

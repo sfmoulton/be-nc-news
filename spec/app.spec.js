@@ -11,7 +11,15 @@ chai.use(require("sams-chai-sorted"));
 describe("/api", () => {
   beforeEach(() => connection.seed.run());
   after(() => connection.destroy());
-
+it('GET returns a status 200 and a JSON object containing all of the available endpoints', () => {
+  return request(app).get("/api").expect(200).then(({body}) => {
+    expect(body).to.be.an('object');
+    expect(body[GET / api]).to.eql({
+      description:
+        "serves up a json representation of all the available endpoints of the api"
+    });
+  })
+});
   describe("/topics", () => {
     it("GET returns status 200 and all topics", () => {
       return request(app)
