@@ -14,9 +14,16 @@ describe("/api", () => {
 it('GET returns a status 200 and a JSON object containing all of the available endpoints', () => {
   return request(app).get("/api").expect(200).then(({body}) => {
     expect(body).to.be.an('object');
-    expect(body[GET / api]).to.eql({
+    expect(body["GET /api"]).to.eql({
       description:
         "serves up a json representation of all the available endpoints of the api"
+    });
+    expect(body["GET /api/topics"]).to.eql({
+      description: "serves an array of all topics",
+      queries: [],
+      exampleResponse: {
+        topics: [{ slug: "football", description: "Footie!" }]
+      }
     });
   })
 });
@@ -518,8 +525,13 @@ it('GET returns a status 200 and a JSON object containing all of the available e
           expect(body.msg).to.equal("Method Not Allowed");
         });
     });
-    xit("DELETE returns status 405 and an error message when used on the /api route", () => {
-      //need to come back to when I've written the api endpoint
+    it("DELETE returns status 405 and an error message when used on the /api route", () => {
+      return request(app)
+        .put("/api")
+        .expect(405)
+        .then(({ body }) => {
+          expect(body.msg).to.equal("Method Not Allowed");
+        });
     });
   });
 });
