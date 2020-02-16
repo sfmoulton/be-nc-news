@@ -46,7 +46,8 @@ exports.fetchArticles = (
   sort_by = "created_at",
   order = "desc",
   author,
-  topic
+  topic,
+  limit = 10
 ) => {
   let withAuthorQuery = queryBuilder => {
     if (author !== undefined) {
@@ -69,11 +70,30 @@ exports.fetchArticles = (
       .leftJoin("comments", "articles.article_id", "comments.article_id")
       .groupBy("articles.article_id")
       .modify(withAuthorQuery)
-      .modify(withTopicQuery);
+      .modify(withTopicQuery)
+      .limit(limit);
   } else {
     return Promise.reject({
       status: 400,
       msg: "Invalid Order Query"
     });
   }
+};
+
+exports.addArticle = newArticle => {
+  newArticle.author = newArticle.username;
+  delete newArticle.username;
+
+  return connection("articles")
+    .insert(newArticle, "*")
+    .then(article => {
+      return article[0];
+    });
+};
+
+exports.removeArticleById = article_id => {
+  
+  return connection("articles")
+    .where({ article_id })
+    .del("*")
 };

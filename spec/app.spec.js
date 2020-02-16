@@ -11,22 +11,25 @@ chai.use(require("sams-chai-sorted"));
 describe("/api", () => {
   beforeEach(() => connection.seed.run());
   after(() => connection.destroy());
-it('GET returns a status 200 and a JSON object containing all of the available endpoints', () => {
-  return request(app).get("/api").expect(200).then(({body}) => {
-    expect(body).to.be.an('object');
-    expect(body["GET /api"]).to.eql({
-      description:
-        "serves up a json representation of all the available endpoints of the api"
-    });
-    expect(body["GET /api/topics"]).to.eql({
-      description: "serves an array of all topics",
-      queries: [],
-      exampleResponse: {
-        topics: [{ slug: "football", description: "Footie!" }]
-      }
-    });
-  })
-});
+  it("GET returns a status 200 and a JSON object containing all of the available endpoints", () => {
+    return request(app)
+      .get("/api")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body).to.be.an("object");
+        expect(body["GET /api"]).to.eql({
+          description:
+            "serves up a json representation of all the available endpoints of the api"
+        });
+        expect(body["GET /api/topics"]).to.eql({
+          description: "serves an array of all topics",
+          queries: [],
+          exampleResponse: {
+            topics: [{ slug: "football", description: "Footie!" }]
+          }
+        });
+      });
+  });
   describe("/topics", () => {
     it("GET returns status 200 and all topics", () => {
       return request(app)
@@ -167,6 +170,136 @@ it('GET returns a status 200 and a JSON object containing all of the available e
           expect(body).to.eql({ msg: "Queried Topic Not Found" });
         });
     });
+    it("GET accepts a limit query, which will limit the number of responses that are returned", () => {
+      return request(app)
+        .get("/api/articles?limit=5")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.articles).to.be.an("array");
+          expect(body.articles.length).to.equal(5);
+        });
+    });
+    it("GET returns a limit of 10 articles by default", () => {
+      return request(app)
+        .get("/api/articles")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.articles).to.be.an("array");
+          expect(body.articles.length).to.equal(10);
+        });
+    });
+    // it('GET will return status 400 and an error message if the limit query is not an integer', () => {
+    //   return request(app)
+    //     .get("/api/articles?limit=banana")
+    //     .expect(400)
+    //     .then(({ body }) => {
+    //       expect(body).to.eql({msg: 'Invalid Limit Query'})
+    //     })
+    // }); //come back to -
+    it("GET will include a total_count property on the returning object", () => {
+      return request(app)
+        .get("/api/articles")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body).to.be.have.all.keys("articles", "total_count");
+          expect(body.total_count).to.equal(body.articles.length);
+        });
+    });
+    // it('GET returns the articles from the requested page number', () => {
+    //   return request(app)
+    //     .get("/api/articles?page=2")
+    //     .expect(200)
+    //     .then(({ body }) => {
+    //       expect(body).to.be.have.all.keys("articles", "total_count");
+    //       expect(body.total_count).to.equal(10);
+    //     });
+    // });
+    it("POST returns status 201, and responds with the newly posted article", () => {
+      return request(app)
+        .post("/api/articles/")
+        .send({
+          title: "Test Article",
+          body: "Testing that we can add articles to the database!",
+          username: "butter_bridge",
+          topic: "cats"
+        })
+        .expect(201)
+        .then(({ body }) => {
+          expect(body.article).to.have.all.keys(
+            "article_id",
+            "title",
+            "body",
+            "votes",
+            "topic",
+            "author",
+            "created_at"
+          );
+          expect(body.article.body).to.equal(
+            "Testing that we can add articles to the database!"
+          );
+        });
+    });
+    it("POST returns status 406 and an error message if nothing is sent on the request body", () => {
+      return request(app)
+        .post("/api/articles/")
+        .send({})
+        .expect(406)
+        .then(({ body }) => {
+          expect(body).to.eql({ msg: "Request Format Not Acceptable" });
+        });
+    });
+    it("POST returns status 400 and an error message if the username key on the request body is missing", () => {
+      return request(app)
+        .post("/api/articles/")
+        .send({
+          title: "Test Article",
+          body: "Testing that we can add articles to the database!",
+          topic: "cats"
+        })
+        .expect(400)
+        .then(({ body }) => {
+          expect(body).to.eql({ msg: "Bad Request - Username Key Not Sent" });
+        });
+    });
+    it("POST returns status 406 and an error message if the title key on the request body is missing", () => {
+      return request(app)
+        .post("/api/articles/")
+        .send({
+          body: "Testing that we can add articles to the database!",
+          username: "butter_bridge",
+          topic: "cats"
+        })
+        .expect(406)
+        .then(({ body }) => {
+          expect(body).to.eql({ msg: "Request Format Not Acceptable" });
+        });
+    });
+    it("POST returns status 406 and an error message if the body key on the request body is missing", () => {
+      return request(app)
+        .post("/api/articles/")
+        .send({
+          title: "Test Article",
+          username: "butter_bridge",
+          topic: "cats"
+        })
+        .expect(406)
+        .then(({ body }) => {
+          expect(body).to.eql({ msg: "Request Format Not Acceptable" });
+        });
+    });
+    it("POST returns status 406 and an error message if the topic key on the request body is missing", () => {
+      return request(app)
+        .post("/api/articles/")
+        .send({
+          title: "Test Article",
+          body: "Testing that we can add articles to the database!",
+          username: "butter_bridge"
+        })
+        .expect(400)
+        .then(({ body }) => {
+          expect(body).to.eql({ msg: "Bad Request - Body Key Not Sent" });
+        });
+    });
   });
 
   describe("/:article_id", () => {
@@ -267,13 +400,35 @@ it('GET returns a status 200 and a JSON object containing all of the available e
           expect(body.article.votes).to.equal(150);
         });
     });
+    it("DELETE returns status 204 when requested article has been deleted", () => {
+      return request(app)
+        .delete("/api/articles/10")
+        .expect(204);
+    });
+    it("DELETE returns status 404 and an error message when article requested to be deleted does not exist", () => {
+      return request(app)
+        .delete("/api/articles/99999")
+        .expect(404)
+        .then(({ body }) => {
+          expect(body).to.eql({ msg: "Article Not Found" });
+        });
+    });
+    it("DELETE returns status 400 and an error message when article query is in an invalid format", () => {
+      return request(app)
+        .delete("/api/articles/banana")
+        .expect(400)
+        .then(({ body }) => {
+          expect(body).to.eql({ msg: "Invalid Text Representation" });
+        });
+    });
+
     describe("/comments", () => {
       it("POST returns status 201, and responds with the newly posted comment", () => {
         return request(app)
           .post("/api/articles/1/comments")
           .send({
             body: "Just testing that we can add comments to the articles!",
-           username: "butter_bridge" 
+            username: "butter_bridge"
           })
           .expect(201)
           .then(({ body }) => {
@@ -297,14 +452,14 @@ it('GET returns a status 200 and a JSON object containing all of the available e
             expect(body).to.eql({ msg: "Request Format Not Acceptable" });
           });
       });
-      it('POST returns status 400 and an error message if a username key is not included on the request comment object', () => {
+      it("POST returns status 400 and an error message if a username key is not included on the request comment object", () => {
         return request(app)
           .post("/api/articles/1/comments")
-          .send({body: 'Will this body be added?'})
+          .send({ body: "Will this body be added?" })
           .expect(400)
           .then(({ body }) => {
             expect(body).to.eql({
-              msg: "Bad Request - Missing Key on Comment"
+              msg: "Bad Request - Username Not Assigned to Comment"
             });
           });
       });

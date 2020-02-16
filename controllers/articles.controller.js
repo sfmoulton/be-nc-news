@@ -2,7 +2,9 @@ const {
   fetchArticlesById,
   fetchCommentCountbyArticle,
   amendArticleVotes,
-  fetchArticles
+  fetchArticles,
+  addArticle,
+  removeArticleById
 } = require("../models/articles.model");
 const {
   addArticleComment,
@@ -39,7 +41,10 @@ exports.postArticleComment = (req, res, next) => {
   addArticleComment(newComment, article_id)
     .then(comment => {
       if (comment.author === null) {
-        return Promise.reject({ status: 400, msg: "Bad Request - Username Not Assigned to Comment" });
+        return Promise.reject({
+          status: 400,
+          msg: "Bad Request - Username Not Assigned to Comment"
+        });
       }
 
       res.status(201).send({ comment });
@@ -69,15 +74,50 @@ exports.getArticleCommentsById = (req, res, next) => {
 };
 
 exports.getArticles = (req, res, next) => {
-  const { sort_by, order, author, topic } = req.query;
+  const { sort_by, order, author, topic, limit } = req.query;
 
   return Promise.all([
-    fetchArticles(sort_by, order, author, topic),
+    fetchArticles(sort_by, order, author, topic, limit),
     checkUserByUsername(author),
     checkTopic(topic)
   ])
     .then(([articles, user, topic]) => {
-      res.status(200).send({ articles });
+      const articlesCount = articles.length;
+      res.status(200).send({ total_count: articlesCount, articles });
+    })
+    .catch(next);
+};
+
+exports.postArticle = (req, res, next) => {
+  const newArticle = req.body;
+
+  addArticle(newArticle)
+    .then(article => {
+      if (article.author === null) {
+        return Promise.reject({
+          status: 400,
+          msg: "Bad Request - Username Key Not Sent"
+        });
+      } else if (article.topic === null) {
+        return Promise.reject({
+          status: 400,
+          msg: "Bad Request - Body Key Not Sent"
+        });
+      }
+      res.status(201).send({ article });
+    })
+    .catch(next);
+};
+
+exports.deleteArticleById = (req, res, next) => {
+  const { article_id } = req.params;
+
+  return Promise.all([
+    removeArticleById(article_id),
+    fetchArticlesById(article_id)
+  ])
+    .then(([articleToDelete, article]) => {
+      res.status(204).send({ articleToDelete });
     })
     .catch(next);
 };
