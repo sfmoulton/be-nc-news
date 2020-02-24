@@ -7,8 +7,11 @@ const {
   send405Error,
   handleServerError
 } = require("./errors/index");
+const cors = require("cors");
 
 app.use(express.json()); 
+
+app.use(cors());
 
 app.use("/api", apiRouter);
 
