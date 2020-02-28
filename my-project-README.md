@@ -1,4 +1,4 @@
-# NC-News Project
+# NC-News Project (Back-End)
 
 **NC-News** has been created to allow users to post articles they have written, as well as allowing them to read or comment on other users articles. 
 
