@@ -1,8 +1,12 @@
-# NC-News Project - Back-End
+# NC-News Project
 
-**NC-News** has been created to allow users to post articles they have written, as well as allowing them to read or comment on other users articles.
+**NC-News** has been created to allow users to post articles they have written, as well as allowing them to read or comment on other users articles. 
 
 **NC-News** has created a space for users to share their thoughts and opinions, and show off their creative writing!
+
+First things first - have a look at the **hosted NC-News app** following this link:
+
+The app has been designed with UX in mind - with buttons and text displayed in a way that will be clear to the user. For details on the back-end of the project, please see below:
 
 ## Getting Started
 
@@ -22,6 +26,10 @@ git remote remove origin
 git remote add origin <YOUR-GITHUB-URL>
 ```
 Or if you would like to suggest any project changes, please feel free to collaborate and your own push requests to my repo.
+
+## Heroku Hosted API
+
+Please follow the below link to access the API on your browser: 
 
 ## Available Endpoints!
 
