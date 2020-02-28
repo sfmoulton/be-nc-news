@@ -4,10 +4,6 @@
 
 **NC-News** has created a space for users to share their thoughts and opinions, and show off their creative writing!
 
-First things first - have a look at the **hosted NC-News app** following this link:
-
-The app has been designed with UX in mind - with buttons and text displayed in a way that will be clear to the user. For details on the back-end of the project, please see below:
-
 ## Getting Started
 
 The following instructions will allow you to set up your own version of NC-News!
