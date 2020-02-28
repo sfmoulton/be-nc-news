@@ -74,10 +74,11 @@ exports.getArticleCommentsById = (req, res, next) => {
 };
 
 exports.getArticles = (req, res, next) => {
-  const { sort_by, order, author, topic, limit } = req.query;
+  const { sort_by, order, author, topic, limit, p } = req.query;
+  
 
   return Promise.all([
-    fetchArticles(sort_by, order, author, topic, limit),
+    fetchArticles(sort_by, order, author, topic, limit, p),
     checkUserByUsername(author),
     checkTopic(topic)
   ])

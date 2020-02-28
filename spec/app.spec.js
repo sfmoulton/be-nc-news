@@ -188,14 +188,6 @@ describe("/api", () => {
           expect(body.articles.length).to.equal(10);
         });
     });
-    // it('GET will return status 400 and an error message if the limit query is not an integer', () => {
-    //   return request(app)
-    //     .get("/api/articles?limit=banana")
-    //     .expect(400)
-    //     .then(({ body }) => {
-    //       expect(body).to.eql({msg: 'Invalid Limit Query'})
-    //     })
-    // }); //come back to -
     it("GET will include a total_count property on the returning object", () => {
       return request(app)
         .get("/api/articles")
@@ -205,15 +197,15 @@ describe("/api", () => {
           expect(body.total_count).to.equal(body.articles.length);
         });
     });
-    // it('GET returns the articles from the requested page number', () => {
-    //   return request(app)
-    //     .get("/api/articles?page=2")
-    //     .expect(200)
-    //     .then(({ body }) => {
-    //       expect(body).to.be.have.all.keys("articles", "total_count");
-    //       expect(body.total_count).to.equal(10);
-    //     });
-    // });
+    it('GET returns the articles from the requested page number', () => {
+      return request(app)
+        .get("/api/articles?p=2")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body).to.be.have.all.keys("articles", "total_count");
+          expect(body.articles.length).to.eql(2);
+        });
+    }); 
     it("POST returns status 201, and responds with the newly posted article", () => {
       return request(app)
         .post("/api/articles/")

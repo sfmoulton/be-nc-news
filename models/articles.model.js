@@ -47,7 +47,8 @@ exports.fetchArticles = (
   order = "desc",
   author,
   topic,
-  limit = 10
+  limit = 10,
+  p = 0
 ) => {
   let withAuthorQuery = queryBuilder => {
     if (author !== undefined) {
@@ -61,6 +62,15 @@ exports.fetchArticles = (
     }
   };
 
+  const offsetCalculator = p => {
+    if (p === 0) {
+      return 0;
+    }
+    return (p - 1) * limit;
+  };
+
+  const offset = offsetCalculator(p);
+  
   if (order === "asc" || order === "desc") {
     return connection
       .select("articles.*")
@@ -71,7 +81,8 @@ exports.fetchArticles = (
       .groupBy("articles.article_id")
       .modify(withAuthorQuery)
       .modify(withTopicQuery)
-      .limit(limit);
+      .limit(limit)
+      .offset(offset);
   } else {
     return Promise.reject({
       status: 400,
@@ -92,8 +103,7 @@ exports.addArticle = newArticle => {
 };
 
 exports.removeArticleById = article_id => {
-  
   return connection("articles")
     .where({ article_id })
-    .del("*")
+    .del("*");
 };
